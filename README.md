@@ -10,6 +10,7 @@
 Чтобы все работало нужно пердварительно получить ключи для работы с Google Sheets и Telegram bot
 
 google/key.py содержит данные для работы с google API и google sheets
+В папке google должен присутствовать creds.json полученный из гугла.
 
 api_key = {
         'json': creds_file,
