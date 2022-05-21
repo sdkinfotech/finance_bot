@@ -13,7 +13,7 @@ class NewRecord:
     price: стоимость объекта в денежных единицах, определяется пользователем
     simbol: знак денежной единицы. по умолчанию RUB. изменения не предусмотрены на данный момент
     """
-# comments for git test 
+
     def __init__(self, price, expense_item, item='', description='', simbol='RUB'):
         self.date = str(datetime.datetime.now().date())
         self.time = str(datetime.datetime.now().time())[:-10]
