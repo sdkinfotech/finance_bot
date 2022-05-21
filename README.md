@@ -17,3 +17,5 @@ api_key = {
         'sheet': 'your_google_sheet_key_here'}
 
 bot/key.txt содержит токен для Telegram BOT
+
+https://zen.yandex.ru/video/watch/6288b1f2ca007263a781516d демонстрационное видео
