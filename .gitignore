@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caching directories
+bot/__pycache__/
+
+# Environments
+.env
+venv/
+ENV/
+
+# Editor directories and files
+.vs/
+*.suo
+*.user
+*.userprefs
+*.sln.docstates
+
+# Ignore all in the root .vs directory
+.vs/*

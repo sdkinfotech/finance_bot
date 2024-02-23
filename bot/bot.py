@@ -1,14 +1,17 @@
+import asyncio
 from aiogram import Bot, Dispatcher, types
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.utils import executor
+from aiogram.fsm.storage.memory import MemoryStorage
+
+
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+
 
 import os
 import logging
 import markups as nav
-import send_record
-import buttons
+from actions import NewRecord
+# import buttons
 
 
 # глобальные переменные для суммы вводимой с клавиатуры
@@ -22,7 +25,7 @@ description = ''  # глобальная переменная для указа�
 
 
 # сообщения бота
-hello_message = 'Что будем добавлять?'
+hello_message = 'Привет! Выбери что записать 🙂'
 
 expense_message = 'Выберите из списка:'
 
@@ -54,6 +57,7 @@ add_item_delete = False
 msg_choice_action = ''
 choice_action_delete = False
 msg_edit = ''
+
 
 # States для машины состояний. Используется чтобы сохранять значения вводимые пользователем
 class Form(StatesGroup):
@@ -92,19 +96,19 @@ with open(key_file, 'r') as f:
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TOKEN)
 storage = MemoryStorage()  # память машины состояний
-dp = Dispatcher(bot, storage=storage)
+dp = Dispatcher(storage=storage)
 
 
 
 # ОБРАБОТКА ХЕНДЛЕРОВ
 
-@dp.message_handler(commands='start')
-async def start(message: types.Message):
-    global_var_reset()
+@dp.message()
+async def start_cmd(message: types.Message):
+    # global_var_reset()
     if message.chat.type == 'private':
         await bot.send_message(message.from_user.id, hello_message, reply_markup=nav.mainMenu)
 
-
+"""
 @dp.message_handler()
 async def bot_message(message: types.Message):
     if message.chat.type == 'private':
@@ -216,7 +220,8 @@ async def rand(message: types.Message):
     print(current_price)
     await bot.delete_message(message.from_user.id, message.message.message_id)
     await bot.send_message(message.from_user.id, completed_message, reply_markup=nav.mainMenu)
-    send_record.send_record(buttons.expense_buttons[expense], price, item, description)
+    new_record = NewRecord(buttons.expense_buttons[expense], price, item, description) 
+    new_record.send_record() 
     global_var_reset()  # обнуляем переменные
 
 
@@ -236,9 +241,7 @@ async def rand(message: types.Message):
 # теперь обработаем полученное значение item_name
 @dp.message_handler(state=Form.item_name)
 async def process_item_name(message: types.Message, state: FSMContext):
-    """
-    Process item name
-    """
+   
     async with state.proxy() as data:
         global item, msg_add_descr_choice, add_item_delete
         data['item_name'] = message.text
@@ -268,9 +271,7 @@ async def rand(message: types.Message):
 # теперь обработаем полученное значение description_name
 @dp.message_handler(state=Form.description_name)
 async def process_description_name(message: types.Message, state: FSMContext):
-    """
-    Process description_name name
-    """
+    
     await msg_add_descr_input.delete()
     async with state.proxy() as data:
         global description
@@ -280,6 +281,9 @@ async def process_description_name(message: types.Message, state: FSMContext):
         print('Описание:', description)
         await bot.send_message(message.from_user.id, after_descr_msg, reply_markup=nav.item_menu)
 
+"""
+async def main():
+        await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())
