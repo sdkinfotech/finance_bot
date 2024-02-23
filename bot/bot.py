@@ -106,7 +106,7 @@ dp = Dispatcher(storage=storage)
 async def start_cmd(message: types.Message):
     # global_var_reset()
     if message.chat.type == 'private':
-        await bot.send_message(message.from_user.id, hello_message, reply_markup=nav.mainMenu)
+        await bot.send_message(message.from_user.id, hello_message, reply_markup=nav.numeric_menu)
 
 """
 @dp.message_handler()
