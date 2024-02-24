@@ -3,12 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Caching directories
-
+# Directories 
 
 # Environments
 .env
 .venv/
+venv/
 ENV/
 
 # Editor directories and files
