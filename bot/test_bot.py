@@ -9,7 +9,7 @@ import buttons
 from actions import NewRecord
 
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 
 

@@ -1,125 +1,25 @@
-import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.fsm.storage.memory import MemoryStorage
-
-
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
-
-
-import os
-import logging
-import markups as nav
+from aiogram import types, Router
+from aiogram.filters import CommandStart, Command
 from actions import NewRecord
-# import buttons
+from aiogram.fsm.context import FSMContext
 
+import markups as nav
+import buttons
 
-# глобальные переменные для суммы вводимой с клавиатуры
-current_price = ''
-saved_price = ''
+# в этом модуле собраны все клавиатурные хендлеры
+# требуется основательно их переработать
+# кроме того, требуется поработать и с машиной состояний.
+# пока ее обработка не совсем понятна
 
-expense = ''  # глобальная переменная для хранения значения статьи расхода при выборе
-price = ''  # глобальная переменная для хранения записи цены
-item = ''  # глобальная переменная для хранения наименования
-description = ''  # глобальная переменная для указания описания
-
-
-# сообщения бота
-hello_message = 'Привет! Выбери что записать 🙂'
-
-expense_message = 'Выберите из списка:'
-
-completed_message = 'Запись добавлена в Google таблицу'
-
-after_descr_msg = 'Если нужно отредактировать значения наименования ' \
-                  'и описания можно повторно нажать на 1 или 2, ' \
-                  'или просто нажмите добавить запись'
-
-add_discr_msg = 'Укажите описание тут. Его можно будет ' \
-                'изменить при необходимости до отправки'
-
-after_item_msg = 'Также можно указать подробное описание нажмите на кнопу 2, ' \
-                 'для редактирования названия нажмите 1, ' \
-                 'или просто нажмите добавить запись'
-
-add_item_msg = 'Укажите наименование тут. Его можно будет изменить ' \
-               'при необходимости до отправки'
-
-
-# глобальные переменные для удаления сообщений при передвижении по меню
-msg_add_descr_choice = ''  # в переменную помещатся сообщение, для управления из другой функции
-add_descr_choice = False  # после удаления сообщения флаг меняется на True
-msg_add_descr_input = ''
-
-msg_add_item = ''
-add_item_delete = False
-
-msg_choice_action = ''
-choice_action_delete = False
-msg_edit = ''
-
-
-# States для машины состояний. Используется чтобы сохранять значения вводимые пользователем
-class Form(StatesGroup):
-    item_name = State()  # Will be represented in storage as 'Form:item_name'
-    description_name = State()  # Will be represented in storage as 'Form:description_name'
-
-
-def global_var_reset():
-    """
-    Функция которая сбрасывает значения глобальных переменных
-    Вызов функции происходит при /start при back home
-    также вызов функции осуществляется при add_record
-    :return:
-    """
-    global current_price, saved_price, expense, price, item, description
-
-    # глобальные переменные для суммы вводимой с клавиатуры
-    current_price = ''
-    saved_price = ''
-
-    expense = ''  # глобальная переменная для хранения значения статьи расхода при выборе
-    price = ''  # глобальная переменная для хранения записи цены
-    item = ''  # глобальная переменная для хранения наименования
-    description = ''  # глобальная переменная для указания описания
-    # ---------------------------------------------------------
-    print('current_price, saved_price, expense, price, item, description SET AS DEFAULT')
-
-
-# получаем токен из файла
-script_dir = os.path.dirname(__file__)
-key_file = os.path.join(script_dir, 'key.txt')
-with open(key_file, 'r') as f:
-    TOKEN = f.read()
-
-# инициализация бота
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=TOKEN)
-storage = MemoryStorage()  # память машины состояний
-dp = Dispatcher(storage=storage)
-
-
-
-# ОБРАБОТКА ХЕНДЛЕРОВ
-
-@dp.message()
-async def start_cmd(message: types.Message):
-    # global_var_reset()
-    if message.chat.type == 'private':
-        await bot.send_message(message.from_user.id, hello_message, reply_markup=nav.numeric_menu)
+# создаем новый роутер 
+# его нужно будет подключить в Dispatcher 
+# Через dp.include_routers() в app.py
+keyboard_private_router = Router()
 
 """
-@dp.message_handler()
-async def bot_message(message: types.Message):
-    if message.chat.type == 'private':
-        global from_user
-        from_user = message.text
-        return from_user
-
-
 # обрабатываем кнопки для статьи расходов
 # кнопки которые содержат в коллбэке expButton
-@dp.callback_query_handler(text_contains='expButton')
+@dp.callback_query()
 async def listen_callback(call: types.CallbackQuery):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     global expense  # получаем доступ к глобальной переменной
@@ -280,10 +180,4 @@ async def process_description_name(message: types.Message, state: FSMContext):
         await state.finish()
         print('Описание:', description)
         await bot.send_message(message.from_user.id, after_descr_msg, reply_markup=nav.item_menu)
-
 """
-async def main():
-        await dp.start_polling(bot)
-
-if __name__ == "__main__":
-    asyncio.run(main())
