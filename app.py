@@ -2,15 +2,11 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher, types
-from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.fsm.state import State, StatesGroup
 
-# импортируем хендлены 
 from handlers.cmd_private import cmd_private_router
 from handlers.keyboard_private import keyboard_private_router
-
-# импортируем список команд для кнопки menu в телеграм
 from common import settings
+
 
 # глобальные переменные для суммы вводимой с клавиатуры
 current_price = ''
@@ -55,19 +51,9 @@ def global_var_reset():
     print('current_price, saved_price, expense, price, item, description SET AS DEFAULT')
 
 
-# States для машины состояний. Используется чтобы сохранять значения вводимые пользователем
-class Form(StatesGroup):
-    item_name = State()  # Will be represented in storage as 'Form:item_name'
-    description_name = State()  # Will be represented in storage as 'Form:description_name'
-
-# инициализация бота
-
-
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=settings.TOKEN)
-# память машины состояний
-storage = MemoryStorage()  
-dp = Dispatcher(storage=storage)
+dp = Dispatcher()
 # имортируем роутеры из каталога handlers
 dp.include_routers(cmd_private_router, keyboard_private_router) 
 

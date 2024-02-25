@@ -5,7 +5,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 import logging
-import common.text as text
+import common.bot_text as bot_text
 from actions import NewRecord
 
 import os
@@ -38,8 +38,8 @@ class Form(StatesGroup):
 
 # Главное меню
 mainMenu = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text=text.menu_buttons_text['expenses'], callback_data=text.expenses)],
-    [InlineKeyboardButton(text=text.menu_buttons_text['income'], callback_data=text.income)]
+    [InlineKeyboardButton(text=bot_text.menu_buttons_text['expenses'], callback_data=bot_text.expenses)],
+    [InlineKeyboardButton(text=bot_text.menu_buttons_text['income'], callback_data=bot_text.income)]
 ])
 
 # Далее добавьте оставшиеся клавиатуры, используя тот же формат

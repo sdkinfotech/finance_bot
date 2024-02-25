@@ -12,6 +12,7 @@ venv/
 ENV/
 
 # Editor directories and files
+.vscode/
 .vs/
 *.suo
 *.user

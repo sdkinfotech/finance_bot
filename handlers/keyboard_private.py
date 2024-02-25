@@ -1,11 +1,18 @@
-from aiogram import types, Router
-from aiogram.filters import CommandStart, Command
+import os
+import sys
+# пробрасываем корневой каталог
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from aiogram import types, Router, F
 from actions import NewRecord
+
 from aiogram.fsm.context import FSMContext
+import keyboards as nav
+from common.bot_text import menu_reply_text
+from common.bot_text import expense_buttons_text
 
-import markups as nav
-import buttons
 
+# import common.text as text
 # в этом модуле собраны все клавиатурные хендлеры
 # требуется основательно их переработать
 # кроме того, требуется поработать и с машиной состояний.
@@ -16,17 +23,85 @@ import buttons
 # Через dp.include_routers() в app.py
 keyboard_private_router = Router()
 
+
+### ЭКРАН ГЛАВНОГО МЕНЮ
+
+# обработка вызова меню 
+@keyboard_private_router.callback_query(lambda query: query.data == "expenses")
+async def handle_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.message.answer('Выберите категорию', reply_markup=nav.expense_buttons_markup)
+    await query.answer()
+
+
+### ВЫЗОВ НОМЕРНОЙ КЛАВИАТУРЫ
+    
+# Обработка номерной клавиатуры для ввода суммы
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_1")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_2")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_3")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_4")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_5")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_6")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_7")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_8")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_9")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_0")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_point")
+async def listen_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    await query.answer(callback_data)
+
+# очистка введенных значений с клавиатуры
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_clear")
+async def listen_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.answer(callback_data)
+
+# подтвержение введенных значений с клавиатуры
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_ok")
+async def listen_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.answer(callback_data)
+
+### ЭКРАН МЕНЮ ВЫБОРА КАТЕГОРИИ
+    
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_public_utilities")
+async def listen_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.message.answer('Введите сумму', reply_markup=nav.numeric_menu)
+    await query.answer()
+
+### ОБЩИЕ ВЫЗОВЫ
+    
+# Обработка кнопки Домой(назад в главное меню)
+@keyboard_private_router.callback_query(lambda query: query.data == "back")
+async def listen_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.message.answer("Главное меню", reply_markup=nav.mainMenu)
+    await query.answer()
+
+# отлавливает все коллбэки, которые не были обработаны выше, пишет информацию в лог и консоль
+@keyboard_private_router.callback_query()
+async def handle_callback(query: types.CallbackQuery):
+    print(f"Нажата кнопка с необработанным callback_data: {query.data}")
+
+
 """
 # обрабатываем кнопки для статьи расходов
 # кнопки которые содержат в коллбэке expButton
-@dp.callback_query()
+@keyboard_private_router.message()
 async def listen_callback(call: types.CallbackQuery):
     await bot.delete_message(call.from_user.id, call.message.message_id)
     global expense  # получаем доступ к глобальной переменной
     expense = str(call.data)[10:]  # обрезаем expButton в строке
     await bot.send_message(call.from_user.id, 'Укажите сумму', reply_markup=nav.numeric_menu)
-
-
+    
 # обрабатываем цифровую клавиатуру, добавлена защита от дурака
 @dp.callback_query_handler(text_contains='numButton')
 async def listen_callback(call: types.CallbackQuery):
