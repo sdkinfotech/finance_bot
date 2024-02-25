@@ -8,6 +8,7 @@ from handlers.keyboard_private import keyboard_private_router
 from common import settings
 
 
+
 # глобальные переменные для суммы вводимой с клавиатуры
 current_price = ''
 saved_price = ''
@@ -67,7 +68,7 @@ async def main():
 
         # передаем все команды из common.bot_command_list.py для отображения команд в меню ТГ
         # указываем scope=BotCommandScopeAllPrivateChats
-        # слкдующая закомментированная конструкция чищает список
+        # слкдующая закомментированная конструкция очищает список
         # await bot.delete_my_commands(scope=types.BotCommandScopeAllPrivateChats())
         await bot.set_my_commands(commands=settings.private_cmd, scope=types.BotCommandScopeAllPrivateChats())
         

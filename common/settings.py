@@ -10,7 +10,7 @@ from dotenv import load_dotenv, find_dotenv
 private_cmd = [
 
     BotCommand(command='start', description="Начало работы с ботом"),
-    BotCommand(command='help', description="Справка"),
+    # BotCommand(command='help', description="Справка"),
 ]
 
 # Получаем токен из переменных окружения

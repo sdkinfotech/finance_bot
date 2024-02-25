@@ -26,18 +26,78 @@ keyboard_private_router = Router()
 
 ### ЭКРАН ГЛАВНОГО МЕНЮ
 
-# обработка вызова меню 
+# обработка расходы 
 @keyboard_private_router.callback_query(lambda query: query.data == "expenses")
 async def handle_callback(query: types.CallbackQuery):
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
-    await query.message.answer('Выберите категорию', reply_markup=nav.expense_buttons_markup)
+    await query.message.edit_text('Выберите категорию', reply_markup=nav.expense_buttons_markup) 
+    await query.answer()
+
+# Обработка кнопки доходы)
+@keyboard_private_router.callback_query(lambda query: query.data == "income")
+async def listen_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.answer("Раздел находится в разработке")
+
+
+### ЭКРАН МЕНЮ ВЫБОРА КАТЕГОРИИ
+
+# можно было распасковать это через FOR и создать динамически обработчики, 
+# но практическим путем выяснилось, что их лучше всего явно определить до поллинга,
+# это важно для правильной работы ассинхронных функций и позволяет избежать долгого отклика.
+# Так как они делают одну и ту же работу, за исключением передачи собственного имени
+# то можно просто определить декораторы и задекорировать одну функцию всеми декораторами
+    
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_public_utilities")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_housing_Rent")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_phone_Internet")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_commission_payment")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_subscription_payment")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_household_products")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_health")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_sport_fitness")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_hygiene_cosmetics")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_alcohol")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_products")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_education")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_trading_business")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_investment")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_charity")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_gifts")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_events")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_restaurants")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_entertainments")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_flight_Intercity")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_taxi")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_public_transport")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_vehicle")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_fuel")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_everyday_life_tech")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_house_furniture_tools")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_clothes_footwear")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_accessory")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_hand_tools")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_building_materials")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_private_debt")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_credit")
+@keyboard_private_router.callback_query(lambda query: query.data == "expButton_other")
+async def listen_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.message.edit_text('Введите сумму', reply_markup=nav.numeric_menu)
     await query.answer()
 
 
-### ВЫЗОВ НОМЕРНОЙ КЛАВИАТУРЫ
+### ВЫЗОВЫ НОМЕРНОЙ КЛАВИАТУРЫ
     
 # Обработка номерной клавиатуры для ввода суммы
+# Объявим декораторы явно, как в случае с выбором категории для улучшения 
+# скорости отклика кнопок. В случае с использованием ноперной клавиатуры обработаем
+# Цифровые кнопки одной функцией, а экшн кнопки отдельными функциями, 
+# так как у них разное предназначение. 
+
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_1")
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_2")
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_3")
@@ -51,30 +111,50 @@ async def handle_callback(query: types.CallbackQuery):
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_point")
 async def listen_callback(query: types.CallbackQuery):
     callback_data = query.data
-    await query.answer(callback_data)
+    await query.answer(f"Нажата {callback_data}")
 
 # очистка введенных значений с клавиатуры
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_clear")
 async def listen_callback(query: types.CallbackQuery):
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
-    await query.answer(callback_data)
+    await query.message.edit_text('Введите сумму:', reply_markup=nav.numeric_menu) 
+    await query.answer("Сброс значений")
 
 # подтвержение введенных значений с клавиатуры
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_ok")
 async def listen_callback(query: types.CallbackQuery):
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
-    await query.answer(callback_data)
+    await query.message.edit_text('Введите сумму:', reply_markup=nav.item_menu) 
+    await query.answer("Добавьте описание или отредактируйте наименование")
 
-### ЭКРАН МЕНЮ ВЫБОРА КАТЕГОРИИ
+### РЕДАКТИРОВАНИЕ КАТЕГОРИИ, ОПИСАНИЕ
+    #'item': '🗒️ наименование',
+    #'descr':'🗒️ описание',
+    #'add_record': '✏️ Добавить запись'
     
-@keyboard_private_router.callback_query(lambda query: query.data == "expButton_public_utilities")
-async def listen_callback(query: types.CallbackQuery):
+@keyboard_private_router.callback_query(lambda query: query.data == "item")
+async def handle_callback(query: types.CallbackQuery):
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
-    await query.message.answer('Введите сумму', reply_markup=nav.numeric_menu)
-    await query.answer()
+    await query.message.edit_text('Введите наименование:', reply_markup=nav.item_menu) 
+    await query.answer("Отредактируйте наименование")
+
+@keyboard_private_router.callback_query(lambda query: query.data == "descr")
+async def handle_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.message.edit_text('Введите описание:', reply_markup=nav.item_menu) 
+    await query.answer("Отредактируйте описание")
+
+@keyboard_private_router.callback_query(lambda query: query.data == "add_record")
+async def handle_callback(query: types.CallbackQuery):
+    callback_data = query.data
+    print(f"Получен callback_data: {callback_data}")
+    await query.message.edit_text('Добавим чтонибудь еще?:', reply_markup=nav.expense_buttons_markup) 
+    await query.answer("Запись успешно добавлена")
+
 
 ### ОБЩИЕ ВЫЗОВЫ
     
@@ -83,7 +163,7 @@ async def listen_callback(query: types.CallbackQuery):
 async def listen_callback(query: types.CallbackQuery):
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
-    await query.message.answer("Главное меню", reply_markup=nav.mainMenu)
+    await query.message.edit_text("Главное меню", reply_markup=nav.mainMenu)
     await query.answer()
 
 # отлавливает все коллбэки, которые не были обработаны выше, пишет информацию в лог и консоль
