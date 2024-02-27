@@ -41,7 +41,7 @@ async def handle_callback(query: types.CallbackQuery, state: FSMContext):
     await state.update_data(item=None)
     await state.update_data(description='Нет описания')
     await state.update_data(price=0)
-    await state.update_data(nuneric_state = '')
+    await state.update_data(numeric_state = '')
     # проверка информации в машине состояний
     data = await state.get_data()
     print(f"Данные машины состояний на текущий момент:\n{data}")
@@ -49,7 +49,7 @@ async def handle_callback(query: types.CallbackQuery, state: FSMContext):
     await query.message.edit_text('<b>Выберите категорию</b>', reply_markup=nav.expense_buttons_markup)
     await query.answer()
 
-# Обработка кнопки доходы)
+# Обработка кнопки доходы
 @keyboard_private_router.callback_query(lambda query: query.data == "income")
 async def listen_callback(query: types.CallbackQuery):
     # записываем коллбэк в переменную 
@@ -143,13 +143,37 @@ async def listen_callback(query: types.CallbackQuery, state: FSMContext):
     if 'numeric_state' not in data:
         row = button_value
         await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-        await state.update_data(numeric_state=row)
-            
+        await state.update_data(numeric_state=row)      
     else:
         row = data['numeric_state'] + button_value
-        await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-        await state.update_data(numeric_state=row)
-    
+        
+        # проверка на валидность вводимого значения
+        # если значение начинается с 00
+        if row == '00':
+             # сбрасываем значение машины состояний
+             await state.update_data(numeric_state='')
+             # выводим информационное сообщение для пользователя
+             await query.answer("Значение не может начинаться c двух нулей", show_alert=True)
+             await query.message.edit_text('Введите сумму:', reply_markup=nav.numeric_menu)
+             return
+        elif row == '.':
+            # сбрасываем значение машины состояний
+             await state.update_data(numeric_state='')
+             # выводим информационное сообщение для пользователя
+             await query.answer("Значение не может начинаться со знака разделителя", show_alert=True)
+             await query.message.edit_text('Введите сумму:', reply_markup=nav.numeric_menu)
+             return
+        else:
+            # Проверка на появление двойной точки в значении
+            if row.count('.') > 1:
+                # Сбрасываем значение и сообщаем о некорректном вводе
+                await state.update_data(numeric_state='')
+                await query.answer("Значение не может содержать более двух знаков разделителя.", show_alert=True)
+                await query.message.edit_text('Введите сумму:', reply_markup=nav.numeric_menu)
+                return  # Снова не нужно обновлять сообщение или состояние
+            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
+            await state.update_data(numeric_state=row)
+
     await query.answer()
 
 # очистка введенных значений с клавиатуры
@@ -169,20 +193,43 @@ async def listen_callback(query: types.CallbackQuery, state: FSMContext):
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
     
-    # сначала получаем то, что у нас в numeric_state
-    # это значение вводилось пользователем с номерной 
-    # и сразу же получим все остальные значения для вывода
-    data = await state.get_data()
-    print(f"Данные машины состояний на текущий момент:\n{data}")
-    price = float(data['numeric_state'])
+    try:
+        # сначала получаем то, что у нас в numeric_state
+        # это значение вводилось пользователем с номерной 
+        data = await state.get_data()
+        row = data['numeric_state']
+        print(f"Данные машины состояний на текущий момент:\n{data}")
 
-    # теперь записываем это значение в price для
-    # передачи в базу данных, конвертируем в формат float
-    await state.update_data(price = price)
-    await state.update_data()
+        # Если строка оканчивается на точку, добавляем "0" в конец строки
+        if row.endswith('.'):
+            row += '0'
+        price = float(row)
 
-    await query.message.edit_text("Добавить описание \nзаписать в базу", reply_markup=nav.item_menu) 
+        # Проверка на нулевое значение: 
+        if price == 0:
+            await query.answer("Вы указали нулевое значение, в этом нет никакого смысла.", show_alert=True)
+            await state.update_data(numeric_state='')
+            await query.message.edit_text('Введите сумму:', reply_markup=nav.numeric_menu) 
+            return  # Прекращаем дальнейшее выполнение обработчика
+        
+        # теперь записываем это значение в price для
+        # передачи в базу данных, конвертируем в формат float
+        await state.update_data(price = price)
+        await state.update_data()
+        await query.message.edit_text("Добавить описание \nзаписать в базу", reply_markup=nav.item_menu) 
+    
+    except ValueError:
+        # не удалось преобразовать введенные данные, отправим сообщение пользователю
+        await query.answer("Вы забыли указать стоимость.", show_alert=True)
+        await state.update_data(numeric_state='')
+        return  # прерываем выполнение функции и не записываем данные
+
+    # Если исключения нет, значит преобразование прошло успешно, 
+    # и мы можем продолжить дальнейшие действия
+    # сбрасываем numeric_states, тут он нам не нужен
+    await state.update_data(numeric_state=None) 
     await query.answer("")
+   
 
 ### ДОБАВЛЕНИЕ ЗАПИСИ
     #'descr':'🗒️ Добавить описание',
@@ -203,6 +250,7 @@ async def description_received(message: types.Message, state: FSMContext):
     await state.update_data(description=message.text)
     await message.answer("Описание добавлено, \nРедактировать описание, \nзаписать в базу", reply_markup=nav.item_menu)
 
+# Обработчик добавления записи в базу данных
 @keyboard_private_router.callback_query(lambda query: query.data == "add_record")
 # :param expense_item: статья расходов
 # :param price: цена
@@ -212,11 +260,40 @@ async def handle_callback(query: types.CallbackQuery, state: FSMContext):
      # например {'description': 'Это тестовое сообщение'}
      # Записываем его в переменную для передачи в вывод через метод send.record()
     data = await state.get_data()
-    # Вытаскиваем значение по ключу
+    print(f"Данные машины состояний на текущий момент:\n{data}")
+    
+    # название категории берем из словаря кнопок по ключу полученному из машины состояний
+    # item = expense_buttons_text[data['item']]
+
+    # Получаем название категории и убираем emoji
+    raw_item = expense_buttons_text[data['item']]
+    # Регулярное выражение для поиска и удаления emoji
+    import re
+    emoji_pattern = re.compile("["
+                           u"\U0001F600-\U0001F64F"  # emoticons
+                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                           u"\U0001F700-\U0001F77F"  # alchemical symbols
+                           u"\U0001F780-\U0001F7FF"  # Geometric Shapes Extended
+                           u"\U0001F800-\U0001F8FF"  # Supplemental Arrows-C
+                           u"\U0001F900-\U0001F9FF"  # Supplemental Symbols and Pictographs
+                           u"\U0001FA00-\U0001FA6F"  # Chess Symbols
+                           u"\U0001FA70-\U0001FAFF"  # Symbols and Pictographs Extended-A
+                           u"\U00002702-\U000027B0"  # Dingbats
+                           u"\U000024C2-\U0001F251" 
+                           "]+", flags=re.UNICODE)
+    
+    item = emoji_pattern.sub(r'', raw_item)  # Заменяем найденные emoji на пустую строку
+    # убираем пробелы в начале и в конце строки
+    item = item.strip() 
+    # Вытаскиваем остальные значения  по ключу из машины состояний
     description = data['description']
-    print(data)
+    # также убираем пробелы для строки описания
+    description = description.strip()
+    price = data['price']
+    
     # формирование записи 
-    new_record = NewRecord(expense_item="test",  description=description, price="15")
+    new_record = NewRecord(expense_item=item,  description=description, price=price)
     # Отправляем в базу
     new_record.send_record()
     # Очистка значений машины состояний
