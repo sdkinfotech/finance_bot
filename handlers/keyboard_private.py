@@ -9,10 +9,12 @@ from aiogram import types, Router, F
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 
-import keyboards as nav
-from common.bot_text import menu_reply_text, expense_buttons_text
+import keyboards.keyboard as nav
+from keyboards.buttons import expense_buttons_text
+from common.text_blocks import menu_reply_text
+
 from common.settings import ASYNC_TIMER
-from actions import NewRecord
+from operations.actions import NewRecord
 
 # создаем новый роутер 
 # его нужно будет подключить в Dispatcher 

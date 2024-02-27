@@ -7,11 +7,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from aiogram import types, Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-import keyboards as nav
-from common.bot_text import menu_reply_text
+import keyboards.keyboard as nav
+from common.text_blocks import menu_reply_text
 from common.settings import ASYNC_TIMER
-
-
 
 
 # создаем новый роутер 
