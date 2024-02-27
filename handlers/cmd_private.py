@@ -31,7 +31,6 @@ cmd_private_router = Router()
                             (F.text.lower() == 'go') |
                             (F.text.lower() == 'begin'))
 async def start_cmd(message: types.Message, state: FSMContext):
-    
 
     # проверка значений машины состояния
     data = await state.get_data()

@@ -49,7 +49,7 @@ button_num_7 = InlineKeyboardButton(text='7', callback_data='numButton_7')
 button_num_8 = InlineKeyboardButton(text='8', callback_data='numButton_8')
 button_num_9 = InlineKeyboardButton(text='9', callback_data='numButton_9')
 button_num_0 = InlineKeyboardButton(text='0', callback_data='numButton_0')
-button_num_point = InlineKeyboardButton(text=',', callback_data='numButton_point')
+button_num_point = InlineKeyboardButton(text=',', callback_data='numButton_.')
 button_num_clear = InlineKeyboardButton(text='↩️ Заново', callback_data='numButton_clear')
 button_num_ok = InlineKeyboardButton(text='Готово ➡️', callback_data='numButton_ok')
 

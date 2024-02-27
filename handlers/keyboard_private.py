@@ -39,8 +39,9 @@ async def handle_callback(query: types.CallbackQuery, state: FSMContext):
     
     # пресет значений машины состояний для следующих шагов
     await state.update_data(item=None)
-    await state.update_data(description=None)
-    await state.update_data(price=None)
+    await state.update_data(description='Нет описания')
+    await state.update_data(price=0)
+    await state.update_data(nuneric_state = '')
     # проверка информации в машине состояний
     data = await state.get_data()
     print(f"Данные машины состояний на текущий момент:\n{data}")
@@ -122,192 +123,65 @@ async def listen_callback(query: types.CallbackQuery, state: FSMContext):
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_8")
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_9")
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_0")
-@keyboard_private_router.callback_query(lambda query: query.data == "numButton_point")
+@keyboard_private_router.callback_query(lambda query: query.data == "numButton_.")
 async def listen_callback(query: types.CallbackQuery, state: FSMContext):
     # записываем коллбэк в переменную 
     callback_data = query.data
     # выводим отладочное сообщение в консоли, какой коллбэк получен
     print(f"Получен callback_data: {callback_data}")
 
-    # обрабатываем ввод цифр в зависимости от полученного коллбэка
-    if callback_data == 'numButton_1' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '1'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '1'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-        
-    
-    if callback_data == 'numButton_2' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '2'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '2'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-    
-    if callback_data == 'numButton_3' : 
-        
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '3'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '3'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-    
-    if callback_data == 'numButton_4' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '4'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '4'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-    
-    if callback_data == 'numButton_5' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '5'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '5'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-    
-    if callback_data == 'numButton_6' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '6'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '6'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-    
-    if callback_data == 'numButton_7' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '7'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '7'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-    
-    if callback_data == 'numButton_8' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '8'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '8'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-    
-    if callback_data == 'numButton_9' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '9'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '9'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-    
-    if callback_data == 'numButton_0' : 
-        # получаем значение из машины состояний
-        data = await state.get_data()
-        
-        # проверяем, существует ли ключ 'numeric_state' в data
-        # если нет, инициализируем его значением соответствующим нажатой кнопки
-        if 'numeric_state' not in data:
-            row = '0'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
-            
-        else:
-            row = data['numeric_state'] + '0'
-            await query.message.edit_text(row, reply_markup=nav.numeric_menu)
-            await state.update_data(numeric_state=row)
+    # Разделяем строку по "_" для того чтобы вытащить значение кнопки из коллбэка
+    parts = callback_data.split("_")
+    # Выбираем последний элемент полученного списка, который и будет числом
+    button_value = parts[-1] if len(parts) > 1 else None  # '0' если существует, None в противном случае
 
+    # получаем значение из машины состояний
+    data = await state.get_data()
+        
+    # проверяем, существует ли ключ 'numeric_state' в data
+    # если нет, инициализируем его значением соответствующим нажатой кнопки
+    if 'numeric_state' not in data:
+        row = button_value
+        await query.message.edit_text(row, reply_markup=nav.numeric_menu)
+        await state.update_data(numeric_state=row)
+            
+    else:
+        row = data['numeric_state'] + button_value
+        await query.message.edit_text(row, reply_markup=nav.numeric_menu)
+        await state.update_data(numeric_state=row)
+    
     await query.answer()
 
 # очистка введенных значений с клавиатуры
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_clear")
-async def listen_callback(query: types.CallbackQuery):
+async def listen_callback(query: types.CallbackQuery, state: FSMContext):
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
+    # сбрасываем введенные значения
+    await state.update_data(numeric_state='')
     await query.message.edit_text('Введите сумму:', reply_markup=nav.numeric_menu) 
-    await query.answer("Сброс значений")
+    await query.answer()
 
 # подтвержение введенных значений с клавиатуры
 @keyboard_private_router.callback_query(lambda query: query.data == "numButton_ok")
-async def listen_callback(query: types.CallbackQuery):
+async def listen_callback(query: types.CallbackQuery, state: FSMContext):
+    
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
-    await query.message.edit_text('Введите сумму:', reply_markup=nav.item_menu) 
+    
+    # сначала получаем то, что у нас в numeric_state
+    # это значение вводилось пользователем с номерной 
+    # и сразу же получим все остальные значения для вывода
+    data = await state.get_data()
+    print(f"Данные машины состояний на текущий момент:\n{data}")
+    price = float(data['numeric_state'])
+
+    # теперь записываем это значение в price для
+    # передачи в базу данных, конвертируем в формат float
+    await state.update_data(price = price)
+    await state.update_data()
+
+    await query.message.edit_text("Добавить описание \nзаписать в базу", reply_markup=nav.item_menu) 
     await query.answer("")
 
 ### ДОБАВЛЕНИЕ ЗАПИСИ
@@ -327,7 +201,7 @@ async def handle_callback(query: types.CallbackQuery, state: FSMContext):
 @keyboard_private_router.message(UserStates.description, F.text)
 async def description_received(message: types.Message, state: FSMContext):
     await state.update_data(description=message.text)
-    await message.answer("Описание добавлено", reply_markup=nav.item_menu)
+    await message.answer("Описание добавлено, \nРедактировать описание, \nзаписать в базу", reply_markup=nav.item_menu)
 
 @keyboard_private_router.callback_query(lambda query: query.data == "add_record")
 # :param expense_item: статья расходов
