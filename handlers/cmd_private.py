@@ -60,5 +60,5 @@ async def help_cmd(message: types.Message):
     if message.chat.type == 'private':
         await message.delete()
         await message.answer(f'Можно начать с команды /start или написать слово "меню"')
-        await asyncio.sleep(2)
-        await message.delete(ASYNC_TIMER)
+        await asyncio.sleep(ASYNC_TIMER)
+        await message.delete()
