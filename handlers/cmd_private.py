@@ -1,12 +1,15 @@
 import os
 import sys
+import asyncio
 # пробрасываем корневой каталог
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from aiogram import types, Router, F
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 import keyboards as nav
 from common.bot_text import menu_reply_text
+from common.settings import ASYNC_TIMER
 
 
 
@@ -27,12 +30,17 @@ cmd_private_router = Router()
                             (F.text.lower() == 'start') |
                             (F.text.lower() == 'go') |
                             (F.text.lower() == 'begin'))
-async def start_cmd(message: types.Message):
-    # global_var_reset()
+async def start_cmd(message: types.Message, state: FSMContext):
+    
+
+    # проверка значений машины состояния
+    data = await state.get_data()
+    print(f"Данные машины состояний на текущий момент:\n{data}")
     if message.chat.type == 'private':
         await message.delete()
         await message.answer(menu_reply_text['hello_message'], reply_markup=nav.mainMenu)
 
+"""
 @cmd_private_router.message(F.text)
 async def start_cmd(message: types.Message):
     if message:
@@ -52,8 +60,5 @@ async def help_cmd(message: types.Message):
     if message.chat.type == 'private':
         await message.delete()
         await message.answer(f'Можно начать с команды /start или написать слово "меню"')
-
-
-"""
-
-
+        await asyncio.sleep(2)
+        await message.delete(ASYNC_TIMER)

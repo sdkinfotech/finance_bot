@@ -16,24 +16,22 @@ class NewRecord:
     send_record - Осуществляет запиь строки в БД
     """
 
-    def __init__(self, price, expense_item, item='', description='', simbol='RUB'):
+    def __init__(self, price, expense_item, description='', simbol='RUB'):
      
         self.expense_item = expense_item
-        self.item = item
         self.description = description
         self.price = price
         self.simbol = simbol
-        print("Create object", self.item)
+        print("Create object", self.expense_item, self.price, self.simbol)
 
 
     def send_record(self):
         """
         :param expense_item: статья расходов
         :param price: цена
-        :param item: наименование товара
-        :param description: подробное описание
+        :param description: описание
         """
         # отладочная информация
         # нужно убедиться, что данные получены верно из телеграм бота.
-        print(self.expense_item, self.price, self.item, self.description, self.simbol)
+        print(self.expense_item, self.price,self.description, self.simbol)
 

@@ -19,4 +19,8 @@ TOKEN = os.getenv('TOKEN') # получаем токен из .env
 
 # в этом списке разрешенные типы обновлений для pollyng
 # передаются в app.py в start_polling(allowed_updates=)
-ALLOWED_UPDATES = ['callback_query','message'] 
+ALLOWED_UPDATES = ['callback_query','message']
+
+# таймер после которого сообщения исчезают
+# Удаляют пользовательские сообщения, и сообщения бота через время 
+ASYNC_TIMER = 3

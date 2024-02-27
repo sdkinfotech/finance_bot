@@ -3,11 +3,13 @@ import logging
 
 from aiogram import Bot, Dispatcher, types
 
+# для форматирования сообщений HTML
+# передается при инициализации бота
+# parse_mode=ParseMode.HTML
+from aiogram.enums import ParseMode
 from handlers.cmd_private import cmd_private_router
 from handlers.keyboard_private import keyboard_private_router
 from common import settings
-
-
 
 # глобальные переменные для суммы вводимой с клавиатуры
 current_price = ''
@@ -53,7 +55,7 @@ def global_var_reset():
 
 
 logging.basicConfig(level=logging.INFO)
-bot = Bot(token=settings.TOKEN)
+bot = Bot(token=settings.TOKEN, parse_mode=ParseMode.HTML)
 dp = Dispatcher()
 # имортируем роутеры из каталога handlers
 dp.include_routers(cmd_private_router, keyboard_private_router) 

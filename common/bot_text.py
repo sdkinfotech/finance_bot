@@ -41,9 +41,9 @@ menu_buttons_text = {
     'expenses': '💵 Расходы',
     'income': '💰 Доходы',
     'back': '⬅️ Домой',
-    'item': '🗒️ наименование',
-    'descr':'🗒️ описание',
-    'add_record': '✏️ Добавить запись'
+   #'item': '🗒️ наименование',
+    'descr':'🗒️ добавить описание',
+    'add_record': '✏️ Записать'
 }
 
 # menu_buttons для обработки call.data
