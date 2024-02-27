@@ -11,48 +11,6 @@ from handlers.cmd_private import cmd_private_router
 from handlers.keyboard_private import keyboard_private_router
 from common import settings
 
-# глобальные переменные для суммы вводимой с клавиатуры
-current_price = ''
-saved_price = ''
-
-expense = ''  # глобальная переменная для хранения значения статьи расхода при выборе
-price = ''  # глобальная переменная для хранения записи цены
-item = ''  # глобальная переменная для хранения наименования
-description = ''  # глобальная переменная для указания описания
-
-# глобальные переменные для удаления сообщений при передвижении по меню
-msg_add_descr_choice = ''  # в переменную помещатся сообщение, для управления из другой функции
-add_descr_choice = False  # после удаления сообщения флаг меняется на True
-msg_add_descr_input = ''
-
-msg_add_item = ''
-add_item_delete = False
-
-msg_choice_action = ''
-choice_action_delete = False
-msg_edit = ''
-
-
-def global_var_reset():
-    """
-    Функция которая сбрасывает значения глобальных переменных
-    Вызов функции происходит при /start при back home
-    также вызов функции осуществляется при add_record
-    :return:
-    """
-    global current_price, saved_price, expense, price, item, description
-
-    # глобальные переменные для суммы вводимой с клавиатуры
-    current_price = ''
-    saved_price = ''
-
-    expense = ''  # глобальная переменная для хранения значения статьи расхода при выборе
-    price = ''  # глобальная переменная для хранения записи цены
-    item = ''  # глобальная переменная для хранения наименования
-    description = ''  # глобальная переменная для указания описания
-    # ---------------------------------------------------------
-    print('current_price, saved_price, expense, price, item, description SET AS DEFAULT')
-
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=settings.TOKEN, parse_mode=ParseMode.HTML)
