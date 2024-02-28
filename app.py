@@ -1,3 +1,8 @@
+"""
+Главный модуль приложения
+Отсюда стартует бот и выполняются 
+Различные предустановки
+"""
 import asyncio
 import logging
 
@@ -16,28 +21,37 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=settings.TOKEN, parse_mode=ParseMode.HTML)
 dp = Dispatcher()
 # имортируем роутеры из каталога handlers
-dp.include_routers(cmd_private_router, keyboard_private_router) 
+dp.include_routers(cmd_private_router, keyboard_private_router)
 
 
 async def main():
-        
-        # удаление вебхуков, в случае если бот был оффлайн
-        # на сервере могли накопиться сообщения, и после того 
-        # как бот включится, все эти сообщения будут приходить 
-        await bot.delete_webhook(drop_pending_updates=True)
+    """
+    bot.delete_webhook:
+    удаление вебхуков, в случае если бот был оффлайн
+    на сервере могли накопиться сообщения, и после того 
+    как бот включится, все эти сообщения будут приходить
 
-        # передаем все команды из common.bot_command_list.py для отображения команд в меню ТГ
-        # указываем scope=BotCommandScopeAllPrivateChats
-        # слкдующая закомментированная конструкция очищает список
-        # await bot.delete_my_commands(scope=types.BotCommandScopeAllPrivateChats())
-        await bot.set_my_commands(commands=settings.private_cmd, scope=types.BotCommandScopeAllPrivateChats())
+    bot.set_my_commands:
+    передаем все команды из common.bot_command_list.py 
+    для отображения команд в меню ТГ
+    указываем scope=BotCommandScopeAllPrivateChats
         
-        # проверка обновлений
-        # allowed_updates примнимает список только разрешенных обновлений
-        # можно почитать в документации https://core.telegram.org/bots/api#getupdates
-        await dp.start_polling(bot, allowed_updates=settings.ALLOWED_UPDATES)
-        
-        
+    bot.delete_my_commands:
+    закомментированная конструкция очищает список
+
+    dp.start_polling:
+    проверка обновлений
+    
+    allowed_updates:
+    примнимает список только разрешенных обновлений
+    почитать в документации https://core.telegram.org/bots/api#getupdates
+    """
+    await bot.delete_webhook(drop_pending_updates=True)
+    # await bot.delete_my_commands\
+    # (scope=types.BotCommandScopeAllPrivateChats())
+    await bot.set_my_commands(commands=settings.private_cmd, \
+    scope=types.BotCommandScopeAllPrivateChats())
+    await dp.start_polling(bot, allowed_updates=settings.ALLOWED_UPDATES)
 
 if __name__ == "__main__":
     asyncio.run(main())

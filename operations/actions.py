@@ -1,3 +1,12 @@
+"""
+Модуль содержит классы для оперативного 
+функционирования бэкенд части бота.
+В этом модуле описаны действия, которые бот 
+выполняет после получения данных, или до их получения.
+"""
+import dataclasses
+
+@dataclasses.dataclass
 class NewRecord:
     """
     Используется для формирования объекта, переданного из телеграм канала, 
@@ -17,13 +26,11 @@ class NewRecord:
     """
 
     def __init__(self, price, expense_item, description='', simbol='RUB'):
-     
         self.expense_item = expense_item
         self.description = description
         self.price = price
         self.simbol = simbol
         print("Create object", self.expense_item, self.price, self.simbol)
-
 
     def send_record(self):
         """
@@ -34,6 +41,8 @@ class NewRecord:
         # отладочная информация
         # нужно убедиться, что данные получены верно из телеграм бота.
         # для этого в консоль выводим debug_info строку
-        debug_info = f"Категория расходов: {self.expense_item}\nОписание: {self.description}\nCтоимость: {self.price}\nВалюта: {self.simbol}"
+        debug_info = f"Категория расходов: \
+            {self.expense_item}\nОписание: \
+            {self.description}\nCтоимость: \
+            {self.price}\nВалюта: {self.simbol}"
         print(debug_info)
-
