@@ -258,7 +258,9 @@ async def listen_callback_numbutton_ok(query: types.CallbackQuery, state: FSMCon
 
         await state.update_data(price = price)
         await state.update_data()
-        await query.message.edit_text(menu_text['add_rec_without_descr'], reply_markup=nav.item_menu)
+        await query.message.edit_text(
+            menu_text['add_rec_without_descr'],
+            reply_markup=nav.item_menu)
     except ValueError:
         # не удалось преобразовать введенные данные, отправим сообщение пользователю
         await query.answer(alert_text['forgot_price'], show_alert=True)
