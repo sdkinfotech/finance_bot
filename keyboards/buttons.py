@@ -1,3 +1,9 @@
+"""
+Модуль используется для хранения значений 
+кнопок для кдавиатуры. Также тут могут 
+храниться коллбэки для удобства
+"""
+
 # Словарь с названиями кнопок и соответствующими emoji
 # Используется для клавиатуры, отображающей категории расходов
 expense_buttons_text = {
@@ -47,11 +53,10 @@ menu_buttons_text = {
 
 # menu_buttons для обработки call.data
 # приложение к предыдущему блоку
-add_new = 'add_new'
-expenses = 'expenses'
-income = 'income'
-back = 'back'
-item_button = 'item'
-descr_button = 'description'
-add_record = 'add_record'
-
+ADD_NEW = 'add_new'
+EXPENSES = 'expenses'
+INCOME = 'income'
+BACK = 'back'
+ITEM_BUTTON = 'item'
+DESCR_BUTTON = 'description'
+ADD_RECORD = 'add_record'
