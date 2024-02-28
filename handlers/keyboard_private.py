@@ -38,6 +38,8 @@ class UserStates(StatesGroup):
     item = State() # Категория расходов, устанавливается автоматически
     price = State() # стоимость расходов
     numeric_state = State() # промежуточное значение для номерной клавиатуры
+    message_id_from_bot = None # для временного хранения ID сообщения от бота
+    message_id_from_user = None #  для временнного хранения ID сообщения юзера
 
 ### ЭКРАН ГЛАВНОГО МЕНЮ
 
@@ -253,7 +255,7 @@ async def listen_callback_numbutton_ok(query: types.CallbackQuery, state: FSMCon
         if price == 0:
             await query.answer(alert_text['zero_value_err'], show_alert=True)
             await state.update_data(numeric_state='')
-            await query.message.edit_text('Введите сумму:', reply_markup=nav.numeric_menu)
+            await query.message.edit_text(menu_text['enter_price'], reply_markup=nav.numeric_menu)
             return  # Прекращаем дальнейшее выполнение обработчика
 
         await state.update_data(price = price)
@@ -286,7 +288,9 @@ async def listen_callback_description(query: types.CallbackQuery, state: FSMCont
     """
     callback_data = query.data
     print(f"Получен callback_data: {callback_data}")
-    await query.message.edit_text(menu_text['description'], reply_markup=None)
+    # сохраняем сообщение в машине состояний для того втобы удалить его в будущем
+    message_from_bot =  await query.message.edit_text(menu_text['description'], reply_markup=None)
+    await state.update_data(message_id_fom_bot=message_from_bot.message_id)
     # ожидаем значение введенное пользователем
     await state.set_state(UserStates.description)
     await query.answer()

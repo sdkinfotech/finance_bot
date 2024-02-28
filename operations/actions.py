@@ -41,8 +41,9 @@ class NewRecord:
         # отладочная информация
         # нужно убедиться, что данные получены верно из телеграм бота.
         # для этого в консоль выводим debug_info строку
-        debug_info = f"Категория расходов: \
-            {self.expense_item}\nОписание: \
-            {self.description}\nCтоимость: \
-            {self.price}\nВалюта: {self.simbol}"
+        debug_info = f"\
+            Категория расходов:{self.expense_item}\n\
+            Описание:{self.description}\n\
+            Cтоимость:{self.price}\n\
+            Валюта:{self.simbol}"
         print(debug_info)

@@ -64,7 +64,7 @@ async def help_cmd(message: types.Message):
     Сообщение исчезает через установленное время в ASYNC_TIMER
     """
     if message.chat.type == 'private':
-        await message.delete() 
+        await message.delete()
         sent_message = await message.answer(help_text['main_help'])
         await asyncio.sleep(ASYNC_TIMER)
         await sent_message.delete()
