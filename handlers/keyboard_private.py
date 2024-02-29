@@ -35,11 +35,7 @@ class UserStates(StatesGroup):
     В главное меню, или по звыершению итерации
     """
     description = State() # Описание расходов
-    item = State() # Категория расходов, устанавливается автоматически
-    price = State() # стоимость расходов
-    numeric_state = State() # промежуточное значение для номерной клавиатуры
-    message_id_from_bot = None # для временного хранения ID сообщения от бота
-    message_id_from_user = None #  для временнного хранения ID сообщения юзера
+    item = State() # Категория расходов
 
 ### ЭКРАН ГЛАВНОГО МЕНЮ
 
@@ -55,21 +51,21 @@ async def handle_callback_main_menu(query: types.CallbackQuery, state: FSMContex
     callback_data = query.data
     # выводим отладочное сообщение в консоли, какой коллбэк получен
     print(f"Получен callback_data: {callback_data}")
-    # пресет значений машины состояний для следующих шагов
-    await state.update_data(item=None)
+    # пресет значений машины состояний
     await state.update_data(description='Нет описания')
-    await state.update_data(price=0)
     await state.update_data(numeric_state = '')
     # проверка информации в машине состояний
     data = await state.get_data()
     print(f"Данные машины состояний на текущий момент:\n{data}")
-    await query.message.edit_text(menu_text['choose_category'], \
+    session_id = await query.message.edit_text(menu_text['choose_category'], \
         reply_markup=nav.expense_buttons_markup)
+    # отслеживание изменения session_id
+    await state.update_data(session_id=session_id)
     await query.answer()
 
 # Обработка кнопки доходы
 @keyboard_private_router.callback_query(lambda query: query.data == "income")
-async def listen_callback_income(query: types.CallbackQuery):
+async def listen_callback_income(query: types.CallbackQuery, state: FSMContext):
     """
     Функция для обработки коллбэка
     income: ожидается из главного меню
@@ -290,7 +286,7 @@ async def listen_callback_description(query: types.CallbackQuery, state: FSMCont
     print(f"Получен callback_data: {callback_data}")
     # сохраняем сообщение в машине состояний для того втобы удалить его в будущем
     message_from_bot =  await query.message.edit_text(menu_text['description'], reply_markup=None)
-    await state.update_data(message_id_fom_bot=message_from_bot.message_id)
+    await state.update_data(message_from_bot=message_from_bot)
     # ожидаем значение введенное пользователем
     await state.set_state(UserStates.description)
     await query.answer()
@@ -300,12 +296,20 @@ async def listen_callback_description(query: types.CallbackQuery, state: FSMCont
 async def description_received(message: types.Message, state: FSMContext):
     """
     Функция для обработки коллбэка
-    description: Получаем description от поьзователя
+    description: Получаем description от пользователя
     Мы находились в ожидании получения этого значения
     Функция записывает значение в переменную машины состояний
     """
     await state.update_data(description=message.text)
-    await message.answer(menu_text['add_rec_with_descr'], reply_markup=nav.item_menu)
+    session_id = await message.answer(menu_text['add_rec_with_descr'], reply_markup=nav.item_menu)
+    await state.update_data(session_id=session_id)
+    # забираем предыдущее сообщение от бота  для последующего удаления
+    data = await state.get_data()
+    message_from_bot = data['message_from_bot']
+    await message_from_bot.delete()
+    await state.update_data(message_from_bot=None)
+    # также удаляем сообщение пользователя, которое было получено только что
+    await message.delete()
 
 # Обработчик добавления записи в базу данных
 @keyboard_private_router.callback_query(lambda query: query.data == "add_record")
@@ -355,6 +359,9 @@ async def handle_callback_add_record(query: types.CallbackQuery, state: FSMConte
     new_record.send_record()
     # Очистка значений машины состояний
     await state.clear()
+    await query.message.delete()
+    session_id = await query.message.answer("Запись успешно добавлена. Продолжим?", reply_markup=nav.mainMenu)
+    await state.update_data(session_id=session_id)
     await query.answer()
 
 ### ОБЩИЕ ВЫЗОВЫ

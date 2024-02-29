@@ -44,11 +44,28 @@ async def start_cmd(message: types.Message, state: FSMContext):
     """
 
     # проверка значений машины состояния
+    # после нажатия /start
     data = await state.get_data()
     print(f"Данные машины состояний на текущий момент:\n{data}")
+    # пробуем обратиться к session_id - это идентификатор сообщения
+    # бота, на текущий комент времени. Он динамически изменяется
+    # при редактировании сообщений и вызове клавиатур.
+    # идея этой конструкции в том, чтобы при повторном нажатии /start
+    # сообщение бота с меню должно исчезнуть и
+    # и появиться заново, не создавая дубликат
+    # ВАЖНО!!! нужно обновлять session_id при редактировании сообщения бота
+    try:
+        session_id = data['session_id']
+    except KeyError:
+        print("session_id не существует")
+    else:
+        await session_id.delete()
+        print("session_id RESTART")
+
     if message.chat.type == 'private':
         await message.delete()
-        await message.answer(menu_text['hello_message'], reply_markup=nav.mainMenu)
+        session_id = await message.answer(menu_text['hello_message'], reply_markup=nav.mainMenu)
+        await state.update_data(session_id=session_id)
 
 # /help команда справочной информации
 @cmd_private_router.message(Command('help'))
